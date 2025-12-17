@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './app/user/user.module';
@@ -8,15 +7,11 @@ import { TransactionModule } from './app/transaction/transaction.module';
 import { User } from './app/user/entities/user.entity';
 import { Wallet } from './app/wallet/entities/wallet.entity';
 import { Transaction } from './app/transaction/entities/transaction.entity';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [User, Wallet, Transaction],
-      synchronize: true, // Auto-create tables (dev only)
-    }),
+    DatabaseModule,
     UserModule,
     WalletModule,
     TransactionModule,
