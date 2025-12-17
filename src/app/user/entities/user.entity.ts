@@ -1,4 +1,4 @@
-import { Wallet } from 'src/app/wallet/entities/wallet.entity';
+import { Wallet } from '../../wallet/entities/wallet.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity()
@@ -16,7 +16,7 @@ export class User {
     password: string;
 
     @OneToOne(() => Wallet, (wallet) => wallet.user)
-    @JoinColumn({name: 'wallet_id'})
+    @JoinColumn({ name: 'wallet_id' })
     wallet: Wallet;
 
     //Other informations - address, phone number, etc

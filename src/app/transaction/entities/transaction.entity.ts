@@ -1,6 +1,6 @@
-import { TransferStatus } from 'src/shared/constants';
+import { TransferStatus } from '../../../shared/constants';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Wallet } from 'src/app/wallet/entities/wallet.entity';
+import { Wallet } from '../../wallet/entities/wallet.entity';
 
 @Entity()
 export class Transaction {
