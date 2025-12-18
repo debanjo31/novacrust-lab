@@ -18,6 +18,7 @@ export class WalletController {
 
   @Post(':id/fund')
   async fund(@Param('id', ParseIntPipe) id: number, @Body() fundWalletDto: FundWalletDto) {
+    console.log(fundWalletDto);
     const data = await this.walletService.fundWallet(id, fundWalletDto);
     return ResponseDto.success('Wallet funded successfully', data);
   }
