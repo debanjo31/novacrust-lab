@@ -3,9 +3,11 @@
 Here is how we ensure the Wallet Service handles millions of users and transactions reliably.
 
 ## 1. Money Math (Precision)
-*   **What**: Store money as **Integers** (cents), not decimals.
-    *   *Example*: Store `$1.50` as `150`.
-*   **Why**: Floating-point numbers (decimals) can have tiny errors in computers. Integers are exact. This prevents "missing penny" bugs.
+*   **What**: Store money as **Integers** (cents or hundredths of a currency unit) representing the smallest unit of currency, strictly avoiding floating-point decimals.
+    *   *Example*: Store `$1.50` as `150`, `$0.10` as `10`.
+*   **Why**: Computers use base-2 binary logic, which cannot precisely represent certain base-10 decimals (like `0.1`).
+    *   *The "Floating Point" Error*: `0.1 + 0.2` results in `0.30000000000000004` rather than exactly `0.3`.
+    *   *The Fix*: Integer math is exact (`10 + 20 = 30`). By counting cents instead of dollars, we eliminate rounding errors and "missing penny" bugs entirely, only converting to decimals for display.
 
 ## 2. The Database (The Core)
 *   **Connection Pooling (PgBouncer)**: Imagine the database is a building with only 100 doors. If 10,000 users try to enter, it crashes. A "Pooler" lines them up efficiently so the database handles them without crashing.
