@@ -1,0 +1,93 @@
+@baseUrl = http://localhost:3000
+
+# -----------------------
+# User & Wallet Creation
+# -----------------------
+
+### Create User 1 (Sender)
+# @name createUser1
+POST {{baseUrl}}/user
+Content-Type: application/json
+
+{
+  "name": "Alice Sender",
+  "email": "alice@example.com",
+  "password": "securePassword123"
+}
+
+### Create User 2 (Receiver)
+# @name createUser2
+POST {{baseUrl}}/user
+Content-Type: application/json
+
+{
+  "name": "Bob Receiver",
+  "email": "bob@example.com",
+  "password": "securePassword123"
+}
+
+# -----------------------
+# Wallet Operations
+# -----------------------
+
+# Capture wallet IDs from previous responses (Manual update required if not supported)
+# Or just use the IDs returned from the create user calls.
+# Assuming standard UUIDs or IDs. Replace :id with actual wallet IDs.
+
+### Get Wallet Details (Alice)
+@aliceWalletId = {{createUser1.response.body.wallet.id}}
+GET {{baseUrl}}/wallet/{{aliceWalletId}}
+
+### Fund Wallet (Alice) - Add $1000
+POST {{baseUrl}}/wallet/{{aliceWalletId}}/fund
+Content-Type: application/json
+
+{
+  "amount": 1000
+}
+
+### Check Balance (Alice) after funding
+GET {{baseUrl}}/wallet/{{aliceWalletId}}
+
+# -----------------------
+# Transfers
+# -----------------------
+
+### Transfer from Alice to Bob ($200)
+@bobWalletId = {{createUser2.response.body.wallet.id}}
+POST {{baseUrl}}/wallet/{{aliceWalletId}}/transfer
+Content-Type: application/json
+
+{
+  "receiverWalletId": "{{bobWalletId}}",
+  "amount": 200,
+  "description": "Lunch money"
+}
+
+### Check Wallet Details (Alice) - Should have $800 + Transfer Transaction
+GET {{baseUrl}}/wallet/{{aliceWalletId}}
+
+### Check Wallet Details (Bob) - Should have $200 + Transfer Transaction
+GET {{baseUrl}}/wallet/{{bobWalletId}}
+
+# -----------------------
+# Error Scenarios
+# -----------------------
+
+### Insufficient Funds Transfer (Alice tries to send $5000)
+POST {{baseUrl}}/wallet/{{aliceWalletId}}/transfer
+Content-Type: application/json
+
+{
+  "receiverWalletId": "{{bobWalletId}}",
+  "amount": 5000,
+  "description": "Too much money"
+}
+
+### Negative Amount Fund
+POST {{baseUrl}}/wallet/{{aliceWalletId}}/fund
+Content-Type: application/json
+
+{
+  "amount": -50
+}
