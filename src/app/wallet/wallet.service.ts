@@ -58,7 +58,11 @@ export class WalletService {
 
     return this.dataSource.transaction(async (manager) => {
       // Locking sender for update to prevent race conditions
-      const sender = await manager.findOne(Wallet, { where: { id: senderId }, relations: ['user'] });
+      const sender = await manager.findOne(Wallet, {
+        where: { id: senderId },
+        relations: ['user'],
+        lock: { mode: 'pessimistic_write' }
+      });
       const receiver = await manager.findOne(Wallet, { where: { id: receiverId }, relations: ['user'] });
 
       if (!sender) throw new NotFoundException('Sender wallet not found');
