@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsPositive, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsPositive, Min, IsOptional, IsString } from 'class-validator';
 
 export class FundWalletDto {
     @IsNumber()
@@ -6,4 +6,8 @@ export class FundWalletDto {
     @IsNotEmpty()
     @Min(1)
     amount: number;
+
+    @IsOptional()
+    @IsString()
+    idempotencyKey?: string;
 }

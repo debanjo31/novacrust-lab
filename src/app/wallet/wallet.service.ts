@@ -25,7 +25,14 @@ export class WalletService {
   }
 
   async fundWallet(walletId: number, fundWalletDto: FundWalletDto) {
-    const { amount } = fundWalletDto;
+    const { amount, idempotencyKey } = fundWalletDto;
+
+    if (idempotencyKey) {
+      const existingTransaction = await this.transactionRepository.findOne({ where: { idempotencyKey } });
+      if (existingTransaction) {
+        return existingTransaction; // Idempotent response
+      }
+    }
 
     return this.dataSource.transaction(async (manager) => {
       const wallet = await manager.findOne(Wallet, { where: { id: walletId } });
@@ -41,6 +48,7 @@ export class WalletService {
         status: TransferStatus.COMPLETED,
         reference: `FUND-${Date.now()}`,
         description: 'Fund Wallet',
+        idempotencyKey,
       });
       await manager.save(transaction);
 
@@ -49,11 +57,18 @@ export class WalletService {
   }
 
   async transferFunds(senderId: number, transferDto: TransferWalletDto) {
-    const { receiverWalletId, amount, description } = transferDto;
+    const { receiverWalletId, amount, description, idempotencyKey } = transferDto;
     const receiverId = Number(receiverWalletId);
 
     if (senderId === receiverId) {
       throw new BadRequestException('Cannot transfer to self');
+    }
+
+    if (idempotencyKey) {
+      const existingTransaction = await this.transactionRepository.findOne({ where: { idempotencyKey } });
+      if (existingTransaction) {
+        return existingTransaction; // Idempotent response
+      }
     }
 
     return this.dataSource.transaction(async (manager) => {
@@ -86,15 +101,12 @@ export class WalletService {
         status: TransferStatus.COMPLETED,
         reference: `TRF-${Date.now()}`, // Simple Reference
         // description: description, // If Transaction entity has description
+        idempotencyKey,
       });
 
       await manager.save(transaction);
 
-      return {
-        ...transaction,
-        sender: { id: sender.id, name: sender.user?.name },
-        receiver: { id: receiver.id, name: receiver.user?.name },
-      };
+      return transaction;
     });
   }
 

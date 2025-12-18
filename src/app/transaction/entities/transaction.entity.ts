@@ -21,6 +21,9 @@ export class Transaction {
     @Column({ type: 'decimal', precision: 16, scale: 2 })
     amount: number;
 
+    @Column({ unique: true, nullable: true })
+    idempotencyKey: string;
+
     @Column()
     reference: string;
 

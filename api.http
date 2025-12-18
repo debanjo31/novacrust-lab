@@ -91,3 +91,26 @@ Content-Type: application/json
 {
   "amount": -50
 }
+
+# -----------------------
+# Idempotency Tests
+# -----------------------
+
+### Fund Wallet with Idempotency Key (First Call)
+POST {{baseUrl}}/wallet/{{aliceWalletId}}/fund
+Content-Type: application/json
+
+{
+  "amount": 100,
+  "idempotencyKey": "unique-fund-key-123"
+}
+
+### Fund Wallet with SAME Idempotency Key (Should return same transaction, no double fund)
+POST {{baseUrl}}/wallet/{{aliceWalletId}}/fund
+Content-Type: application/json
+
+{
+  "amount": 100,
+  "idempotencyKey": "unique-fund-key-123"
+}
+
