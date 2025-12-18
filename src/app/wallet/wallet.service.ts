@@ -73,7 +73,7 @@ export class WalletService {
 
     return this.dataSource.transaction(async (manager) => {
       // 1. Locking sender for update to prevent race conditions
-       const sender = await manager.findOne(Wallet, {
+      const sender = await manager.findOne(Wallet, {
         where: { id: senderId },
         lock: { mode: 'pessimistic_write' }
       });
@@ -82,12 +82,6 @@ export class WalletService {
 
       if (!sender) throw new NotFoundException('Sender wallet not found');
       if (!receiver) throw new NotFoundException('Receiver wallet not found');
-
-      // 2. Re-fetch sender with user relations for the response (safe explicitly after lock)
-      const senderWithUser = await manager.findOne(Wallet, { where: { id: senderId }, relations: ['user'] });
-      if (senderWithUser) {
-        sender.user = senderWithUser.user;
-      }
 
       if (Number(sender.balance) < amount) {
         throw new BadRequestException('Insufficient funds');
@@ -105,8 +99,7 @@ export class WalletService {
         sender: sender,
         receiver: receiver,
         status: TransferStatus.COMPLETED,
-        reference: `TRF-${Date.now()}`, // Simple Reference
-        // description: description, // If Transaction entity has description
+        reference: `TRF-${Date.now()}`,
         idempotencyKey,
       });
 
