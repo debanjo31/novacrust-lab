@@ -58,8 +58,8 @@ export class WalletService {
 
     return this.dataSource.transaction(async (manager) => {
       // Locking sender for update to prevent race conditions
-      const sender = await manager.findOne(Wallet, { where: { id: senderId } });
-      const receiver = await manager.findOne(Wallet, { where: { id: receiverId } });
+      const sender = await manager.findOne(Wallet, { where: { id: senderId }, relations: ['user'] });
+      const receiver = await manager.findOne(Wallet, { where: { id: receiverId }, relations: ['user'] });
 
       if (!sender) throw new NotFoundException('Sender wallet not found');
       if (!receiver) throw new NotFoundException('Receiver wallet not found');
@@ -86,7 +86,11 @@ export class WalletService {
 
       await manager.save(transaction);
 
-      return transaction;
+      return {
+        ...transaction,
+        sender: { id: sender.id, name: sender.user?.name },
+        receiver: { id: receiver.id, name: receiver.user?.name },
+      };
     });
   }
 
@@ -95,7 +99,7 @@ export class WalletService {
   }
 
   async findOne(id: number) {
-    console.log("number", id);
+
     if (!id || isNaN(id)) {
       throw new BadRequestException('Invalid wallet ID');
     }

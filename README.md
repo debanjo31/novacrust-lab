@@ -8,16 +8,22 @@ A simple NestJS wallet service supporting:
 
 ## Setup
 
-1.  **Install Dependencies**
+1.  **Start Database (Docker)**
+    ```bash
+    docker-compose up -d postgres
+    ```
+
+2.  **Install Dependencies**
     ```bash
     npm install
     ```
 
-2.  **Run Development Server**
+3.  **Run Development Server**
     ```bash
     npm run start:dev
     ```
-    The server runs on `http://localhost:3000`. Database (SQLite) will be created automatically (`db.sqlite`).
+    The server runs on `http://localhost:3000`. Database is PostgreSQL.
+    Environment variables are loaded from `.env` file.
 
 3.  **Run Tests**
     ```bash
@@ -46,7 +52,7 @@ A simple NestJS wallet service supporting:
 ## Assumptions
 *   **Authentication**: Omitted for simplicity (Endpoints work with IDs directly).
 *   **Currency**: Fixed to 'USD'.
-*   **Storage**: SQLite used for simplicity (zero-conf).
+*   **Storage**: PostgreSQL (via Docker).
 *   **Concurrency**: Uses `DataSource` transactions to ensure atomicity of transfers, preventing partial updates.
 
 ## Design Decisions
