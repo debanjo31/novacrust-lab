@@ -36,7 +36,4 @@ export class Transaction {
 
     @Column({ default: 'USD' })
     currency: string;
-
-    @Column({ type: 'timestamptz', nullable: true })
-    completedDate: Date;
 }

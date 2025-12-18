@@ -16,12 +16,12 @@ export class WalletController {
 
   @Post(':id/fund')
   fund(@Param('id') id: string, @Body() fundWalletDto: FundWalletDto) {
-    return this.walletService.fundWallet(+id, fundWalletDto);
+    return this.walletService.fundWallet(Number(id), fundWalletDto);
   }
 
   @Post(':id/transfer')
   transfer(@Param('id') id: string, @Body() transferWalletDto: TransferWalletDto) {
-    return this.walletService.transferFunds(+id, transferWalletDto);
+    return this.walletService.transferFunds(Number(id), transferWalletDto);
   }
 
   @Get()
@@ -31,6 +31,7 @@ export class WalletController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.walletService.findOne(+id);
+    console.log("string", id);
+    return this.walletService.findOne(Number(id));
   }
 }

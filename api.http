@@ -35,7 +35,7 @@ Content-Type: application/json
 # Assuming standard UUIDs or IDs. Replace :id with actual wallet IDs.
 
 ### Get Wallet Details (Alice)
-@aliceWalletId = {{createUser1.response.body.wallet.id}}
+@aliceWalletId = 1
 GET {{baseUrl}}/wallet/{{aliceWalletId}}
 
 ### Fund Wallet (Alice) - Add $1000
@@ -54,7 +54,7 @@ GET {{baseUrl}}/wallet/{{aliceWalletId}}
 # -----------------------
 
 ### Transfer from Alice to Bob ($200)
-@bobWalletId = {{createUser2.response.body.wallet.id}}
+@bobWalletId = 2
 POST {{baseUrl}}/wallet/{{aliceWalletId}}/transfer
 Content-Type: application/json
 
@@ -64,23 +64,23 @@ Content-Type: application/json
   "description": "Lunch money"
 }
 
-### Check Wallet Details (Alice) - Should have $800 + Transfer Transaction
+### Check Wallet Details (Alice) 
 GET {{baseUrl}}/wallet/{{aliceWalletId}}
 
-### Check Wallet Details (Bob) - Should have $200 + Transfer Transaction
+### Check Wallet Details (Bob) 
 GET {{baseUrl}}/wallet/{{bobWalletId}}
 
 # -----------------------
 # Error Scenarios
 # -----------------------
 
-### Insufficient Funds Transfer (Alice tries to send $5000)
+### Insufficient Funds Transfer
 POST {{baseUrl}}/wallet/{{aliceWalletId}}/transfer
 Content-Type: application/json
 
 {
   "receiverWalletId": "{{bobWalletId}}",
-  "amount": 5000,
+  "amount": 9000,
   "description": "Too much money"
 }
 

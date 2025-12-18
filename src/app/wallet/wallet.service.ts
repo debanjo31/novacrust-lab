@@ -95,6 +95,10 @@ export class WalletService {
   }
 
   async findOne(id: number) {
+    console.log("number", id);
+    if (!id || isNaN(id)) {
+      throw new BadRequestException('Invalid wallet ID');
+    }
     const wallet = await this.walletRepository.findOne({
       where: { id },
       relations: ['user']
